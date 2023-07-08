@@ -2,13 +2,13 @@
 
 /// List of keys to consider when looking for a single main tag, in order of preference.
 const kMainKeys = <String>[
-  'amenity', 'shop', 'craft', 'tourism', 'historic', 'club',
-  'highway', 'railway',
-  'office', 'healthcare', 'leisure', 'natural',
-  'emergency', 'waterway', 'man_made', 'power', 'aeroway', 'aerialway',
-  'marker', 'public_transport', 'traffic_sign', 'hazard', 'telecom',
-  'landuse', 'military', 'barrier', 'building', 'entrance', 'boundary',
-  'advertising', 'playground', 'traffic_calming', 'attraction',
+  'amenity'//, 'shop', 'craft', 'tourism', 'historic', 'club',
+  //'highway', 'railway',
+  //'office', 'healthcare', 'leisure', 'natural',
+  //'emergency', 'waterway', 'man_made', 'power', 'aeroway', 'aerialway',
+  //'marker', 'public_transport', 'traffic_sign', 'hazard', 'telecom',
+  //'landuse', 'military', 'barrier', 'building', 'entrance', 'boundary',
+  //'advertising', 'playground', 'traffic_calming', 'attraction',
 ];
 final kMainKeysSet = Set.of(kMainKeys);
 
@@ -58,21 +58,21 @@ String? getMainKey(Map<String, String> tags, [bool noPrefix = false]) {
 
 /// Sorts the element by kind, using its tags and helper functions from this file.
 ElementKind detectKind(Map<String, String> tags, [Set<ElementKind>? accepted]) {
-  const kMetaTags = {'source', 'note'};
+  //const kMetaTags = {'source', 'note'};
   if ((accepted == null || accepted.contains(ElementKind.amenity)) &&
       isAmenityTags(tags)) return ElementKind.amenity;
-  if ((accepted == null || accepted.contains(ElementKind.micro)) &&
-      isMicroTags(tags)) return ElementKind.micro;
-  if ((accepted == null || accepted.contains(ElementKind.entrance)) &&
-          tags['entrance'] != null ||
-      tags['building'] == 'entrance') return ElementKind.entrance;
-  if ((accepted == null || accepted.contains(ElementKind.building)) &&
-      tags['building'] != null) return ElementKind.building;
-  if ((accepted == null || accepted.contains(ElementKind.address)) &&
-      getMainKey(tags) == null && (tags.containsKey('addr:housenumber') ||
-      tags.containsKey('addr:housename'))) return ElementKind.address;
-  if (tags.isEmpty || tags.keys.every((element) => kMetaTags.contains(element)))
-    return ElementKind.empty;
+  //if ((accepted == null || accepted.contains(ElementKind.micro)) &&
+  //    isMicroTags(tags)) return ElementKind.micro;
+  //if ((accepted == null || accepted.contains(ElementKind.entrance)) &&
+  //        tags['entrance'] != null ||
+  //    tags['building'] == 'entrance') return ElementKind.entrance;
+  //if ((accepted == null || accepted.contains(ElementKind.building)) &&
+  //    tags['building'] != null) return ElementKind.building;
+  //if ((accepted == null || accepted.contains(ElementKind.address)) &&
+  //    getMainKey(tags) == null && (tags.containsKey('addr:housenumber') ||
+  //    tags.containsKey('addr:housename'))) return ElementKind.address;
+  //if (tags.isEmpty || tags.keys.every((element) => kMetaTags.contains(element)))
+  //  return ElementKind.empty;
   return ElementKind.unknown;
 }
 
@@ -85,18 +85,23 @@ bool isAmenityTags(Map<String, String> tags) {
   if (key == null) return false;
   final k = _clearPrefix(key);
 
-  const kAllGoodKeys = <String>{
+  /*const kAllGoodKeys = <String>{
     'shop',
     'craft',
     'office',
     'healthcare',
     'club',
   };
-  if (kAllGoodKeys.contains(k)) return true;
+  if (kAllGoodKeys.contains(k)) return true;*/
 
   final v = tags[key];
   if (k == 'amenity') {
-    if (v == 'recycling')
+    const goodAmenities = <String>{
+      'cafe',
+      'restaurant',
+    };
+    return goodAmenities.contains(v);
+    /*if (v == 'recycling')
       return tags['recycling_type'] == 'centre';
 
     const wrongAmenities = <String>{
@@ -153,8 +158,8 @@ bool isAmenityTags(Map<String, String> tags) {
       'nameplate',
       'lounger',
     };
-    return !wrongAmenities.contains(v);
-  } else if (k == 'tourism') {
+    return !wrongAmenities.contains(v);*/
+  }/* else if (k == 'tourism') {
     if (v == 'information') {
       return <String>{'office', 'visitor_centre'}.contains(tags['information']);
     }
@@ -215,7 +220,7 @@ bool isAmenityTags(Map<String, String> tags) {
       'train', 'summer_toboggan', 'river_rafting',
     };
     return goodAttraction.contains(v);
-  }
+  }*/
   return false;
 }
 
