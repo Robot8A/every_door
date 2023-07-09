@@ -13,6 +13,7 @@ import 'package:every_door/providers/location.dart';
 import 'package:every_door/providers/poi_filter.dart';
 import 'package:every_door/screens/settings.dart';
 import 'package:every_door/widgets/loc_marker.dart';
+import 'package:every_door/widgets/marker_clipper.dart';
 import 'package:every_door/widgets/track_button.dart';
 import 'package:every_door/widgets/zoom_buttons.dart';
 import 'package:flutter/material.dart';
@@ -228,8 +229,24 @@ class _AmenityMapState extends ConsumerState<AmenityMap> {
   }
 
   Color getIconColor(OsmChange amenity, LegendController legendController) {
-    if (!widget.colorsFromLegend) return Colors.white;
-    return legendController.getLegendItem(amenity)?.color ?? kLegendOtherColor;
+    if (amenity.getFullTags()['diet:vegetarian'] == 'yes') {
+      return Colors.green;
+    } else {
+      return Colors.white;
+    }
+    //if (!widget.colorsFromLegend) return Colors.white;
+    //return legendController.getLegendItem(amenity)?.color ?? kLegendOtherColor;
+  }
+
+  IconData getIconFromAmenityType(OsmChange amenity) {
+    switch (amenity.getFullTags()['amenity']) {
+      case 'cafe':
+        return Icons.local_cafe;
+      case 'restaurant':
+        return Icons.restaurant;
+      default:
+        return Icons.question_mark;
+    }
   }
 
   @override
@@ -290,7 +307,7 @@ class _AmenityMapState extends ConsumerState<AmenityMap> {
 
     final imagery = ref.watch(selectedImageryProvider);
     final leftHand = ref.watch(editorSettingsProvider).leftHand;
-    final iconSize = widget.drawNumbers ? 18.0 : 14.0;
+    final iconSize = widget.drawNumbers ? 26.0 : 12.0;
     final legendCon = ref.watch(legendProvider.notifier);
     final loc = AppLocalizations.of(context)!;
     final amenities = List.of(widget.amenities);
@@ -421,21 +438,29 @@ class _AmenityMapState extends ConsumerState<AmenityMap> {
                 ),
               for (var i = amenities.length - 1; i >= 0; i--)
                 Marker(
+                  anchorPos: AnchorPos.align(AnchorAlign.top),
                   point: amenities[i].location,
                   rotate: true,
                   builder: (ctx) => Stack(
                     alignment: Alignment.center,
                     children: [
                       Container(
-                        decoration: BoxDecoration(
+                        child: ClipPath(
+                          clipper: MarkerClipper(),
+                          child: Container(
+                              color: getIconColor(amenities[i], legendCon)
+                                  .withOpacity(widget.drawNumbers ? 0.7 : 1.0)
+                          )
+                        ),
+                        /*decoration: BoxDecoration(
                           color: getIconColor(amenities[i], legendCon)
                               .withOpacity(widget.drawNumbers ? 0.7 : 1.0),
-                          borderRadius: BorderRadius.circular(iconSize / 2),
-                        ),
+                          borderRadius: BorderRadius.circular(iconSize / 4),
+                        ),*/
                         width: iconSize,
-                        height: iconSize,
+                        height: iconSize * 1.5,
                       ),
-                      if (!widget.drawNumbers && amenities[i].isIncomplete)
+                      /*if (!widget.drawNumbers && amenities[i].isIncomplete)
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -443,18 +468,22 @@ class _AmenityMapState extends ConsumerState<AmenityMap> {
                           ),
                           width: iconSize / 3,
                           height: iconSize / 3,
-                        ),
+                        ),*/
                       if (widget.drawNumbers && i < 9)
                         Container(
                           padding: EdgeInsets.only(left: 1.0),
-                          child: Text(
+                          child: Icon(
+                            getIconFromAmenityType(amenities[i]),
+                            size: iconSize / 1.5,
+                          ),
+                          /*Text(
                             (i + 1).toString(),
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize: iconSize - 3.0,
                             ),
-                          ),
+                          ),*/
                         ),
                     ],
                   ),
