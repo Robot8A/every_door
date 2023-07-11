@@ -13,9 +13,10 @@ import 'package:every_door/providers/location.dart';
 import 'package:every_door/providers/poi_filter.dart';
 import 'package:every_door/screens/settings.dart';
 import 'package:every_door/widgets/loc_marker.dart';
-import 'package:every_door/widgets/marker_clipper.dart';
+import 'package:every_door/models/marker_clipper.dart';
 import 'package:every_door/widgets/track_button.dart';
 import 'package:every_door/widgets/zoom_buttons.dart';
+import 'package:every_door/models/diet_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' show LatLng;
@@ -228,11 +229,26 @@ class _AmenityMapState extends ConsumerState<AmenityMap> {
     super.dispose();
   }
 
-  Color getIconColor(OsmChange amenity, LegendController legendController) {
-    if (amenity.getFullTags()['diet:vegetarian'] == 'yes') {
-      return Colors.green;
-    } else {
-      return Colors.white;
+  Decoration getMarkerDecoration(OsmChange amenity, LegendController legendController) {
+    var stops = DietColorsGenerator.getColors(amenity.getFullTags());
+
+    switch (stops.length) {
+      case 0:
+        return BoxDecoration(
+            color: Colors.white
+        );
+      case 1:
+        return BoxDecoration(
+            color: stops[0]
+        );
+      default:
+      return BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: stops
+          )
+        );
     }
     //if (!widget.colorsFromLegend) return Colors.white;
     //return legendController.getLegendItem(amenity)?.color ?? kLegendOtherColor;
@@ -448,8 +464,7 @@ class _AmenityMapState extends ConsumerState<AmenityMap> {
                         child: ClipPath(
                           clipper: MarkerClipper(),
                           child: Container(
-                              color: getIconColor(amenities[i], legendCon)
-                                  .withOpacity(widget.drawNumbers ? 0.7 : 1.0)
+                              decoration: getMarkerDecoration(amenities[i], legendCon)
                           )
                         ),
                         /*decoration: BoxDecoration(
@@ -472,18 +487,18 @@ class _AmenityMapState extends ConsumerState<AmenityMap> {
                       if (widget.drawNumbers && i < 9)
                         Container(
                           padding: EdgeInsets.only(left: 1.0),
-                          child: Icon(
+                          child: /*Icon(
                             getIconFromAmenityType(amenities[i]),
                             size: iconSize / 1.5,
-                          ),
-                          /*Text(
+                          ),*/
+                          Text(
                             (i + 1).toString(),
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
-                              fontSize: iconSize - 3.0,
+                              fontSize: iconSize - 6.0,
                             ),
-                          ),*/
+                          ),
                         ),
                     ],
                   ),
