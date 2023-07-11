@@ -1,6 +1,7 @@
 import 'package:every_door/helpers/good_tags.dart';
 import 'package:every_door/models/amenity.dart';
 import 'package:every_door/models/preset.dart';
+import 'package:every_door/models/diet_colors.dart';
 import 'package:every_door/providers/presets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,7 +53,7 @@ class LegendController extends StateNotifier<List<LegendItem>> {
   Future updateLegend(List<OsmChange> amenities, {Locale? locale}) async {
     // Considering amenities are listed closest to farthest
     // TODO: run simultaneously to speed this up
-    final typesMap = {
+  /*  final typesMap = {
       for (final a in amenities) a: await _getLabel(a.getFullTags(), locale)
     };
 
@@ -114,7 +115,26 @@ class LegendController extends StateNotifier<List<LegendItem>> {
 
     final labelToLegend = {for (final l in newLegend) l.label: l};
     _legendMap = typesMap.map(
-        (amenity, label) => MapEntry(amenity.databaseId, labelToLegend[label]));
+        (amenity, label) => MapEntry(amenity.databaseId, labelToLegend[label]));*/
+    Map<String, LegendItem> desiredMap = {};
+    final newLegend = <LegendItem>[];
+
+    DietColorsGenerator.colors.forEach((category, values) {
+      values.forEach((type, color) {
+        String onlyCategory = category.split(':')[1].replaceAll('_', ' ');
+        if (type == "yes") type = "friendly";
+        String key = onlyCategory.substring(0, 1).toUpperCase() + onlyCategory.substring(1) + " " + type;
+        newLegend.add(LegendItem(
+          color: color,
+          label: key,
+        ));
+        desiredMap[key] = LegendItem(
+          color: color,
+          label: key,
+        );
+      });
+    });
+    _legendMap = desiredMap;
     state = newLegend;
   }
 

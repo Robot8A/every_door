@@ -135,10 +135,10 @@ class _PoiListPageState extends ConsumerState<PoiListPane> {
     });
 
     // Update the legend.
-    if (isMicromapping) {
+    /*if (isMicromapping) {*/
       final locale = Localizations.localeOf(context);
       ref.read(legendProvider.notifier).updateLegend(data, locale: locale);
-    }
+    /*}*/
 
     // Zoom automatically only when tracking location.
     if (ref.read(trackingProvider)) {
@@ -147,7 +147,7 @@ class _PoiListPageState extends ConsumerState<PoiListPane> {
   }
 
   micromappingTap(LatLngBounds area) async {
-    if (ref.read(editorModeProvider) == EditorMode.micromapping) {
+    if (true/*ref.read(editorModeProvider) == EditorMode.micromapping*/) {
       List<OsmChange> amenitiesAtCenter = nearestPOI
           .where((element) => area.contains(element.location))
           .toList();
@@ -217,7 +217,8 @@ class _PoiListPageState extends ConsumerState<PoiListPane> {
         flex: isMicromapping || farFromUser ? 10 : 23,
         child: buildApiStatusPane(context, apiStatus),
       );
-    } else if (!isMicromapping || isZoomedIn) {
+    }
+    /*else if (!isMicromapping || isZoomedIn) {
       // We want to constraint vertical size, so that tiles
       // don't take precious space from the map.
       final bottomPaneChild = SafeArea(
@@ -241,7 +242,7 @@ class _PoiListPageState extends ConsumerState<PoiListPane> {
         );
     } else if (!widget.isWide) {
       bottomPane = LegendPane();
-    } else {
+    }*/ else {
       bottomPane = SizedBox(
         child: SingleChildScrollView(
           child: SafeArea(

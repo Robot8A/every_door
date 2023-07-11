@@ -260,6 +260,8 @@ class _AmenityMapState extends ConsumerState<AmenityMap> {
         return Icons.local_cafe;
       case 'restaurant':
         return Icons.restaurant;
+      case 'fast_food':
+        return Icons.fastfood;
       default:
         return Icons.question_mark;
     }
@@ -487,18 +489,18 @@ class _AmenityMapState extends ConsumerState<AmenityMap> {
                       if (widget.drawNumbers && i < 9)
                         Container(
                           padding: EdgeInsets.only(left: 1.0),
-                          child: /*Icon(
+                          child: Icon(
                             getIconFromAmenityType(amenities[i]),
                             size: iconSize / 1.5,
-                          ),*/
-                          Text(
+                          ),
+                          /*Text(
                             (i + 1).toString(),
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize: iconSize - 6.0,
                             ),
-                          ),
+                          ),*/
                         ),
                     ],
                   ),

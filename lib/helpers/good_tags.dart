@@ -99,7 +99,7 @@ bool isAmenityTags(Map<String, String> tags) {
     const goodAmenities = <String>{
       'cafe',
       'restaurant',
-      'fast_food'
+      'fast_food',
     };
     return goodAmenities.contains(v);
     /*if (v == 'recycling')
