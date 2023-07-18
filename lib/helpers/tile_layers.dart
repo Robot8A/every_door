@@ -68,8 +68,8 @@ const kOSMImagery = Imagery(
   id: 'openstreetmap',
   type: ImageryType.tms,
   name: 'OpenStreetMap',
-  url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-  attribution: '© OpenStreetMap contributors',
+  url: 'https://b.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+  attribution: '© OpenStreetMap contributors, Yohan Boniface & Humanitarian OpenStreetMap Team',
   minZoom: 0,
   maxZoom: 19,
 );
