@@ -31,6 +31,9 @@ class DietColorsGenerator {
     for (var entry in diets.entries) {
       try {
         var c = colors[entry.key][entry.value];
+        // Add 3 times for a gradient with a steep enough change
+        colorList.add(c);
+        colorList.add(c);
         colorList.add(c);
       } catch (_) {}
     }

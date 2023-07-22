@@ -106,6 +106,14 @@
   "@filterByAddress": {
     "description": "Filter pane, label for choosing an address to filter by."
   },
+  "filterByDiets": "Filter by diet types",
+  "@filterByDiets": {
+    "description": "Filter pane, label for choosing diets to filter by."
+  },
+  "halal": "Halal",
+  "@halal": {
+    "description": "Type of diet."
+  },
   "filterByFloor": "By floor",
   "@filterByFloor": {
     "description": "Filter pane, label for choosing a floor to filter by."

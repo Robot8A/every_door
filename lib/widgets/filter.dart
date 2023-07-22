@@ -1,4 +1,5 @@
 import 'package:every_door/constants.dart';
+import 'package:every_door/models/diet_colors.dart';
 import 'package:every_door/providers/location.dart';
 import 'package:every_door/widgets/radio_field.dart';
 import 'package:every_door/models/address.dart';
@@ -10,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../models/diets.dart';
+
 class PoiFilterPane extends ConsumerStatefulWidget {
   const PoiFilterPane();
 
@@ -18,18 +21,32 @@ class PoiFilterPane extends ConsumerStatefulWidget {
 }
 
 class _PoiFilterPaneState extends ConsumerState<PoiFilterPane> {
-  List<StreetAddress> nearestAddresses = [];
-  List<Floor> floors = [];
+  //List<StreetAddress> nearestAddresses = [];
+  //List<Floor> floors = [];
+  List<Diet> nearestDiets = [];
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      loadAddresses();
-      updateFloors();
+      loadDiets();
+      //loadAddresses();
+      //updateFloors();
     });
   }
 
+  loadDiets() async {
+    setState(() {
+      nearestDiets = [];
+      DietColorsGenerator.colors.forEach((diet, options) {
+        options.forEach((option, color) {
+          nearestDiets.add(Diet(diet: diet, friendly: option));
+        });
+      });
+    });
+  }
+
+  /*
   loadAddresses() async {
     final osmData = ref.read(osmDataProvider);
     final location = ref.read(effectiveLocationProvider);
@@ -37,8 +54,9 @@ class _PoiFilterPaneState extends ConsumerState<PoiFilterPane> {
     setState(() {
       nearestAddresses = addr;
     });
-  }
+  }*/
 
+  /*
   updateFloors() async {
     final filter = ref.watch(poiFilterProvider);
     final osmData = ref.read(osmDataProvider);
@@ -57,6 +75,7 @@ class _PoiFilterPaneState extends ConsumerState<PoiFilterPane> {
       this.floors = floors;
     });
   }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +88,35 @@ class _PoiFilterPaneState extends ConsumerState<PoiFilterPane> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(loc.filterByAddress, style: kFieldTextStyle),
+          Text(loc.filterByDiets, style: kFieldTextStyle),
+          RadioField(
+            options:
+            nearestDiets.map((e) => e.toString()).toList() + [empty],
+            value: (filter.diet?.isEmpty ?? false)
+                ? empty
+                : filter.diet?.toString(),
+            /*onChange: (value) {
+              if (value == null) {
+                // On clear, clearing all fields.
+                ref.read(poiFilterProvider.notifier).state = filter.copyWith(
+                  diet: PoiFilter.nullDiet,
+                );
+              } else if (value == empty) {
+                ref.read(poiFilterProvider.notifier).state =
+                    filter.copyWith(diet: Diet.empty);
+              } else {
+                final addr = nearestAddresses
+                    .firstWhere((element) => element.toString() == value);
+                // Clearing floors when the address has changed.
+                ref.read(poiFilterProvider.notifier).state = filter.copyWith(
+                  diets: addr,
+                  floor: PoiFilter.nullFloor,
+                );
+              }
+              updateFloors();
+            },*/
+          ),
+          /*Text(loc.filterByAddress, style: kFieldTextStyle),
           RadioField(
             options:
                 nearestAddresses.map((e) => e.toString()).toList() + [empty],
@@ -126,7 +173,7 @@ class _PoiFilterPaneState extends ConsumerState<PoiFilterPane> {
                   filter.copyWith(notChecked: value);
             },
             title: Text(loc.filterNonConfirmed, style: kFieldTextStyle),
-          ),
+          ),*/
         ],
       ),
     );

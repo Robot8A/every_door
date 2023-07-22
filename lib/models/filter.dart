@@ -1,51 +1,49 @@
 import 'amenity.dart';
 import 'floor.dart';
+import 'diets.dart';
 import 'address.dart';
 
 class PoiFilter {
-  static const nullFloor = Floor(floor: 'null', level: 0.123456);
-  static const nullAddress = StreetAddress(housenumber: 'null', street: 'null');
+  /*static const nullFloor = Floor(floor: 'null', level: 0.123456);
+  static const nullAddress = StreetAddress(housenumber: 'null', street: 'null');*/
+  static const nullDiet = Diet(diet: 'null', friendly: 'null');
 
-  final Floor? floor;
-  final StreetAddress? address;
+  /*final Floor? floor;
+  final StreetAddress? address;*/
+  final Diet? diet;
   final bool includeNoData; // TODO: what does this even mean
   final bool notChecked;
 
   PoiFilter(
-      {this.floor,
-      this.address,
+      {this.diet,
       this.includeNoData = true,
       this.notChecked = false});
 
   PoiFilter copyWith(
-      {Floor? floor,
-      StreetAddress? address,
+      {Diet? diet,
       bool? includeNoData,
       bool? notChecked}) {
     return PoiFilter(
-      floor: floor == nullFloor ? null : (floor ?? this.floor),
-      address: address == nullAddress ? null : address ?? this.address,
+      diet: diet == nullDiet ? null : diet ?? this.diet,
       includeNoData: includeNoData ?? this.includeNoData,
       notChecked: notChecked ?? this.notChecked,
     );
   }
 
-  bool get isEmpty => floor == null && address == null && !notChecked;
-  bool get isNotEmpty => floor != null || address != null || notChecked;
+  bool get isEmpty => diet == null && !notChecked;
+  bool get isNotEmpty => diet != null || notChecked;
 
   bool matches(OsmChange amenity) {
     if (notChecked && !amenity.isOld) return false;
     final tags = amenity.getFullTags();
-    bool matchesAddr =
-        address == null || address == StreetAddress.fromTags(tags);
-    final floors = MultiFloor.fromTags(tags);
-    bool matchesFloor = floor == null ||
-        ((floor?.isEmpty ?? true)
-            ? floors.isEmpty
-            : floors.floors.contains(floor));
-    return matchesAddr && matchesFloor;
+    final diets = MultiDiet.fromTags(tags);
+    bool matchesDiet = diet == null ||
+        ((diet?.isEmpty ?? true)
+            ? diets.isEmpty
+            : diets.diets.contains(diet));
+    return matchesDiet;
   }
 
   @override
-  String toString() => 'PoiFilter(address: $address, floor: $floor)';
+  String toString() => 'PoiFilter(diet: $diet)';
 }
